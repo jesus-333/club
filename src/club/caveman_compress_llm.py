@@ -10,6 +10,7 @@ import argparse
 from pathlib import Path
 from openai import OpenAI
 import spacy
+from spacy.cli import download as spacy_download
 import numpy as np
 
 from .utils import load_api_key
@@ -42,10 +43,14 @@ def get_nlp_model(lang='en'):
     try:
         nlp = spacy.load(model_name)
     except OSError:
-        print(f"Error: spaCy model '{model_name}' not found.", file=sys.stderr)
-        print(f"Please install it by running:", file=sys.stderr)
-        print(f"  python -m spacy download {model_name}", file=sys.stderr)
-        sys.exit(1)
+        # print(f"Error: spaCy model '{model_name}' not found.", file=sys.stderr)
+        # print(f"Please install it by running:", file=sys.stderr)
+        # print(f"  python -m spacy download {model_name}", file=sys.stderr)
+        # sys.exit(1)
+
+        print("Downloading required language model (one-time setup)...")
+        spacy_download("en_core_web_sm")
+        nlp = spacy.load("en_core_web_sm")
 
     _nlp_models[lang] = nlp
     return nlp

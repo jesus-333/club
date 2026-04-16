@@ -20,6 +20,7 @@ try:
     import torch.nn.functional as F
     from transformers import RobertaForMaskedLM, RobertaTokenizer
     import spacy
+    from spacy.cli import download as spacy_download
 except ImportError:
     print("Error: Required packages not installed. Install with:", file=sys.stderr)
     print("  pip install torch transformers spacy", file=sys.stderr)
@@ -38,7 +39,8 @@ def get_models():
 
     if _roberta_model is None:
         print("Loading models (this may take a moment)...", file=sys.stderr)
-
+        
+        # Select device based on hardware
         if torch.cuda.is_available():
             print("CUDA detected. Using GPU for faster processing.", file=sys.stderr)
             device = torch.device("cuda")
@@ -49,11 +51,18 @@ def get_models():
             print("No GPU detected. Using CPU (this will be slower).", file=sys.stderr)
             device = torch.device("cpu")
 
-        # _device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         _roberta_tokenizer = RobertaTokenizer.from_pretrained('roberta-base')
         _roberta_model = RobertaForMaskedLM.from_pretrained('roberta-base').to(_device)
         _roberta_model.eval()
-        _nlp = spacy.load('en_core_web_sm')
+    
+        # Try loading spaCy model, if not found, download it.
+        try :
+            _nlp = spacy.load('en_core_web_sm')
+        except OSError:
+            print("Downloading required language model (one-time setup)...")
+            spacy_download("en_core_web_sm")
+            _nlp = spacy.load("en_core_web_sm")
+
         print("Models loaded.", file=sys.stderr)
 
     return _roberta_model, _roberta_tokenizer, _device, _nlp
