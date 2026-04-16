@@ -1,0 +1,51 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/club"]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+[project]
+name = "club"
+version = "0.0.1"
+license = "Apache-2.0"
+authors = [
+  { name = "Alberto (Jesus) Zancanaro", email = "alberto.zancanaro.1@gmail.com" },
+]
+description = ""
+dependencies = [
+	"spacy>=3.0.0",
+	"torch>=2.0.0",
+	"transformers>=4.30.0",
+	"en_core_web_sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl",
+	"xx_ent_wiki_sm @ https://github.com/explosion/spacy-models/releases/download/xx_ent_wiki_sm-3.8.0/xx_ent_wiki_sm-3.8.0-py3-none-any.whl"
+]
+readme = "README.md"
+
+# Note on dependencies
+# The nlp module required spacy and some spacy models. To allow a smooth experience for the final user I add here the spacy models as a dependency.
+# Note that spacy publishes their models as pip-installable packages via GitHub releases
+
+[project.optional-dependencies]
+mlm = [
+	"torch>=2.0.0",
+	"transformers>=4.30.0",
+	"spacy>=3.0.0"
+]
+llm = [
+	"openai>=1.0.0",
+	"numpy>=1.24.0",
+]
+
+[project.scripts]
+club = "club.cli:app"
+
+[project.urls]
+Homepage = "https://github.com/jesus-333/club"
+Repository = "https://github.com/jesus-333/club"
+"Bug Tracker" = "https://github.com/jesus-333/club/issues"

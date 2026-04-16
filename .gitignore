@@ -41,3 +41,8 @@ output/
 benchmark/results_*.json
 benchmark/factual_preservation/reports/
 benchmark/factual_preservation/results_*.json
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+.venv
+*.txt
+
