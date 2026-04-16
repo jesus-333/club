@@ -27,12 +27,6 @@ dependencies = [
 ]
 readme = "README.md"
 
-# Note on dependencies
-# "en_core_web_sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl",
-# "xx_ent_wiki_sm @ https://github.com/explosion/spacy-models/releases/download/xx_ent_wiki_sm-3.8.0/xx_ent_wiki_sm-3.8.0-py3-none-any.whl"
-# The nlp module required spacy and some spacy models. To allow a smooth experience for the final user I add here the spacy models as a dependency.
-# Note that spacy publishes their models as pip-installable packages via GitHub releases
-
 [project.scripts]
 club = "club.cli:app"
 
