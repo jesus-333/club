@@ -1,6 +1,6 @@
 # Club
 
-![club banner](./images/club_banner_chatGPT.png)
+![club banner](https://github.com/jesus-333/club/blob/main/images/club_banner_chatGPT.png)
 
 CLI wrapper for the [caveman_compression](https://github.com/wilpel/caveman-compression) by wilpel and geraldaddey (The name is a kinda of a joke since this wrapper is a cli tool and the club was one of the caveman's main tools).
 
