@@ -38,7 +38,18 @@ def get_models():
 
     if _roberta_model is None:
         print("Loading models (this may take a moment)...", file=sys.stderr)
-        _device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+        if torch.cuda.is_available():
+            print("CUDA detected. Using GPU for faster processing.", file=sys.stderr)
+            device = torch.device("cuda")
+        elif torch.backends.mps.is_available():
+            print("Apple Silicon detected. Using MPS for faster processing.", file=sys.stderr)
+            device = torch.device("mps")
+        else:
+            print("No GPU detected. Using CPU (this will be slower).", file=sys.stderr)
+            device = torch.device("cpu")
+
+        # _device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         _roberta_tokenizer = RobertaTokenizer.from_pretrained('roberta-base')
         _roberta_model = RobertaForMaskedLM.from_pretrained('roberta-base').to(_device)
         _roberta_model.eval()

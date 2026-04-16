@@ -22,7 +22,7 @@ except ImportError:
 # Language model cache
 _nlp_models = {}
 
-def get_nlp_model(lang='en'):
+def get_nlp_model(lang = 'en'):
     """Load or retrieve cached spaCy model"""
     if lang in _nlp_models:
         return _nlp_models[lang]
