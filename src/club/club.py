@@ -14,7 +14,6 @@ import typer
 from typing import Optional
 from typing_extensions import Annotated
 
-from . import support_function, caveman_compress_mlm, caveman_compress_nlp
 from .support_enum import language, mode
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -94,6 +93,10 @@ def club_mlm(
       P >= 1e-6:  Aggressive (54% reduction, 83% accuracy)
     """
 
+    # Moving the imports here optimize the performance when --help flag is used.
+    # I.e. basically avoid the import of all dependencies (torch, transformers, spacy, etc.) when the user just want to see the help message of the command.
+    from . import support_function, caveman_compress_mlm
+
     # Get input text
     input_text = support_function.check_and_get_input_text(text, input_file)
 
@@ -128,6 +131,10 @@ def club_nlp(
     """
     NLP-based caveman compression without LLM. Fast, free, deterministic - uses stop word removal and grammar stripping. Supports multiple languages via spaCy.
     """
+    
+    # Moving the imports here optimize the performance when --help flag is used.
+    # I.e. basically avoid the import of all dependencies (torch, transformers, spacy, etc.) when the user just want to see the help message of the command.
+    from . import support_function, caveman_compress_nlp
     
     # Get input text
     input_text = support_function.check_and_get_input_text(text, input_file)
