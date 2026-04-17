@@ -62,22 +62,49 @@ def club_decompress(
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 def club_llm(
-    mode   : Annotated[mode         , typer.Argument(help = "The type or process you want to apply. Possible value are compress or decompress")],
-    text   : Annotated[Optional[str], typer.Argument(help = "The text you want to process.")] = None,
-    input_file     : Annotated[Optional[str]  , typer.Option("--input"   , "-i", help = "The input file with the text you want to compress. If passed together with text, the text will take precedence and a copy of the text will be saved to the input file (backup). If a file already exists at the input file path, it will be overwritten without warning.")] = None,
-    output_file    : Annotated[Optional[str]  , typer.Option("--output"  , "-o", help = "The output file with the text you want to compress")] = None,
+    mode       : Annotated[mode         , typer.Argument(help = "The type or process you want to apply. Possible value are compress or decompress")],
+    text       : Annotated[Optional[str], typer.Argument(help = "The text you want to process.")] = None,
+    input_file : Annotated[Optional[str], typer.Option("--input"  , "-i", help = "The input file with the text you want to compress/decompress. If passed together with text, the text will take precedence and a copy of the text will be saved to the input file (backup). If a file already exists at the input file path, it will be overwritten without warning.")] = None,
+    output_file: Annotated[Optional[str], typer.Option("--output" , "-o", help = "The output file where you want to save the ouput")] = None,
+    verbose    : Annotated[bool         , typer.Option("--verbose", "-v", help = "Enable verbose output")] = False,
+    model      : Annotated[Optional[str], typer.Option("--model"  , "-m", help = "OpenAI model to use (default: gpt-4o). Default gpt-4o")] = "gpt-4o",
 ) :
     """
-    TODO
+    LLM based caveman compression. Implemented but not tested yet.
     """
+
+    # Moving the imports here optimize the performance when --help flag is used.
+    # I.e. basically avoid the import of all dependencies (torch, transformers, spacy, etc.) when the user just want to see the help message of the command.
+    from . import support_function, caveman_compress_llm
+    
+    # Get input text
+    input_text = support_function.check_and_get_input_text(text, input_file)
+
+    # (OPTIONAL) Verbose preamble and start
+    if verbose :
+        support_function.verbose_preamble_nlp(mode, language)
+        support_function.verbose_start(mode, input_text)
+
+    # Process text
+    if mode == "compress" :
+        output_text = caveman_compress_llm.compress_text(input_text, language)
+    elif mode == "decompress" :
+        output_text = caveman_compress_llm.decompress_text(text)
+
+    # (OPTIONAL) Verbose end
+    if verbose : support_function.verbose_end(mode, input_text, output_text)
+
+    # If not output file is provided, print the output text to the console. Otherwise, save the output text to the output file.
+    if output_file is not None : support_function.save_output_text(output_text, output_file, verbose)
+    else : print(f"\nOutput text:\n{output_text}")
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 def club_mlm(
-    mode           : Annotated[mode         , typer.Argument(help = "The type or process you want to apply. Possible value are compress or decompress")],
-    text           : Annotated[Optional[str], typer.Argument(help = "The text you want to process.")] = None,
-    input_file     : Annotated[Optional[str]  , typer.Option("--input"   , "-i", help = "The input file with the text you want to compress. If passed together with text, the text will take precedence and a copy of the text will be saved to the input file (backup). If a file already exists at the input file path, it will be overwritten without warning.")] = None,
-    output_file    : Annotated[Optional[str]  , typer.Option("--output"  , "-o", help = "The output file with the text you want to compress")] = None,
+    mode           : Annotated[mode           , typer.Argument(help = "The type or process you want to apply. Possible value are compress or decompress")],
+    text           : Annotated[Optional[str]  , typer.Argument(help = "The text you want to process.")] = None,
+    input_file     : Annotated[Optional[str]  , typer.Option("--input"   , "-i", help = "The input file with the text you want to compress/decompress. If passed together with text, the text will take precedence and a copy of the text will be saved to the input file (backup). If a file already exists at the input file path, it will be overwritten without warning.")] = None,
+    output_file    : Annotated[Optional[str]  , typer.Option("--output"  , "-o", help = "The output file where you want to save the ouput")] = None,
     verbose        : Annotated[bool           , typer.Option("--verbose" , "-v", help = "Enable verbose output")] = False,
     prob_threshold : Annotated[Optional[float], typer.Option("--prob-threshold", "-p", help = "probability threshold: remove words with P >= this value (default: 1e-5)")] = 1e-5,
     no_adjacent    : Annotated[bool           , typer.Option("--no-adjacent"   , help = "Never remove two adjacent words; if both exceed threshold, remove only the highest probability one")] = False,
@@ -121,12 +148,12 @@ def club_mlm(
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 def club_nlp(
-    mode        : Annotated[mode         , typer.Argument(help = "The type or process you want to apply. Possible value are compress or decompress")],
-    text        : Annotated[Optional[str], typer.Argument(help = "The text you want to process.")] = None,
-    input_file  : Annotated[Optional[str]     , typer.Option("--input"   , "-i", help = "The input file with the text you want to compress. If passed together with text, the text will take precedence and a copy of the text will be saved to the input file (backup). If a file already exists at the input file path, it will be overwritten without warning.")] = None,
-    output_file : Annotated[Optional[str]     , typer.Option("--output"  , "-o", help = "The output file with the text you want to compress")] = None,
-    language    : Annotated[Optional[language], typer.Option("--language", "-l", help = "language code (en, es, de, fr, etc.)")] = language.en,
+    mode        : Annotated[mode              , typer.Argument(help = "The type or process you want to apply. Possible value are compress or decompress")],
+    text        : Annotated[Optional[str]     , typer.Argument(help = "The text you want to process.")] = None,
+    input_file  : Annotated[Optional[str]     , typer.Option("--input"   , "-i", help = "The input file with the text you want to compress/decompress. If passed together with text, the text will take precedence and a copy of the text will be saved to the input file (backup). If a file already exists at the input file path, it will be overwritten without warning.")] = None,
+    output_file : Annotated[Optional[str]     , typer.Option("--output"  , "-o", help = "The output file where you want to save the ouput")] = None,
     verbose     : Annotated[bool              , typer.Option("--verbose" , "-v", help = "Enable verbose output")] = False,
+    language    : Annotated[Optional[language], typer.Option("--language", "-l", help = "language code (en, es, de, fr, etc.)")] = language.en,
 ) :
     """
     NLP-based caveman compression without LLM. Fast, free, deterministic - uses stop word removal and grammar stripping. Supports multiple languages via spaCy.
