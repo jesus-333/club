@@ -59,13 +59,14 @@ Club offers the same functionality as the base package but wrapped in a command 
 
 The structure of a command is the following :
 ```
-club TYPE MODALITY FLAG
+club TYPE MODALITY [TEXT] OPTIONS
 ```
 
 Where :
 - `TYPE` is on the 3 techniques implemented (`llm`, `mlm` and `nlp`).
 - `MODALITY` can be `compress` or `decompress`
-- `FLAG` are optional flags. Some flags are common between all 3 `TYPE` while others are specific to some of them (see flags sections below for more details).
+- `[TEXT]` is the text you want to compress or decompress. 
+- `OPTIONS` are optional flags. Some flags are common between all 3 `TYPE` while others are specific to some of them (see flags sections below for more details).
 
 E.g. if you want to compress your text with `nlp` then you can run
 ```sh
@@ -78,14 +79,20 @@ club nlp decompress "your verbose text"
 ```
 For more examples see the [dedicated section](#examples) below.
 
-Note that if you do not specify `TYPE` and write directly the `MODALITY`, then `club` will default to `nlp`. 
-I.e. running `club compress "your verbose text"` is equivalent to running `club nlp compress "your verbose text"`
+N.B. 1. If you do not specify `TYPE` and write directly the `MODALITY`, then `club` will default to `nlp`. 
+I.e. running `club compress "your verbose text"` is equivalent to running `club nlp compress "your verbose text"`.
 
-### Common Flag
+N.B. 2. `[TEXT]` is an optional parameter you if you specify input and output files. See [common flags](#common-flags) and [examples](#examples) sections below.
 
-### nlp Flag
+### Common Flags
+- `--input` : The input file with the text you want to compress/decompress. If passed together with text, the text will take precedence and a copy of the text will be saved to the input file (backup). If a file already exists at the input file path, it will be overwritten without warning.
+- `--output` : The output file where you want to save the output
+- `--verbose` : Enable verbose output (`TYPE` with eventual settings, input, and output, and compression ratio if `MODALITY` is `compression`)
 
-### mlp Flag
+### nlp Flags
+- `--language` : Language code. If not specified it will default to `en`. Possible values are `[en|es|de|fr|it|pt|nl|el|nb|lt|ja|zh|pl|ro|ru]`.
+
+### mlp Flags
 
 ## Examples
 
